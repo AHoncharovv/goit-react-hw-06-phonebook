@@ -1,38 +1,35 @@
-import { useState, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux/es/exports";
 import { nanoid } from 'nanoid';
 import ContactForm from "../components/ContactForm";
 import ContactList from "../components/ContactList";
 import Filter from "../components/Filter/Filter";
+import { add, remove, filter } from '../components/redux/store';
 
 function Phonebook() {
-  const [contacts, setContacts] = useState(() => JSON.parse(window.localStorage.getItem('contacts')) ?? []);
-  const [filter, setFilter] = useState("");
 
-  useEffect(() => {
-    window.localStorage.setItem("contacts", JSON.stringify(contacts))
-  }, [contacts])
-
+  const users = useSelector(state => state.items);
+  const filteredValue = useSelector(state => state.filter)
+  const dispatch = useDispatch();
+  
   const handlerSubmitForm = (name, number) => {
     const newUser = { id: nanoid(5), name, number };
     const newUserNormalized = name.toLowerCase();
-    const matchedName = contacts.find(contact => contact.name.toLowerCase() === newUserNormalized);
-
-    matchedName
-      ? alert(`${name} is already in contacts.`)
-      : setContacts([...contacts, newUser]);
+    const matchedName = users.find(user => user.name.toLowerCase() === newUserNormalized);
+    matchedName ? alert(`${name} is already in contacts.`) : dispatch(add(newUser));
   }
 
   const handlerFilter = event => {
-    setFilter( event.currentTarget.value );
+    const filtered = event.currentTarget.value;
+    dispatch(filter(filtered));
   }
 
   const handleDeleteUser = event => {
     const deleteUserId = event.currentTarget.value;
-    setContacts(contacts.filter(contact => contact.id !== deleteUserId))
+    dispatch(remove(deleteUserId));
   }
   
-  const normalizedFilter = filter.toLowerCase();
-  const visibleContacts = contacts.filter(contact => contact.name.toLowerCase().includes(normalizedFilter));
+  const normalizedFilter = filteredValue.toLowerCase();
+  const visibleContacts = users.filter(user => user.name.toLowerCase().includes(normalizedFilter));
    
   return ( 
     <div
@@ -47,7 +44,7 @@ function Phonebook() {
       <h1>Phonebook</h1>
       <ContactForm onSubmit={handlerSubmitForm} />
       <h2>Contacts</h2>
-      <Filter value={filter} filterChange={handlerFilter} />
+      <Filter value={filteredValue} filterChange={handlerFilter} />
       <ContactList users={visibleContacts} onClick={handleDeleteUser} />
 
     </div>
