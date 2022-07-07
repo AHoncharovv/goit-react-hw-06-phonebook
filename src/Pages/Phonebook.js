@@ -3,14 +3,14 @@ import { nanoid } from 'nanoid';
 import ContactForm from "../components/ContactForm";
 import ContactList from "../components/ContactList";
 import Filter from "../components/Filter/Filter";
-import { add, remove, filter } from '../components/redux/store';
+import { add, remove, filter } from '../components/redux/actions';
 
 function Phonebook() {
 
   const users = useSelector(state => state.items);
-  const filteredValue = useSelector(state => state.filter)
+  const filteredValue = useSelector(state => state.filter);
   const dispatch = useDispatch();
-  
+
   const handlerSubmitForm = (name, number) => {
     const newUser = { id: nanoid(5), name, number };
     const newUserNormalized = name.toLowerCase();
@@ -40,13 +40,12 @@ function Phonebook() {
         color: '#010101'
       }}
     >
-
+      
       <h1>Phonebook</h1>
       <ContactForm onSubmit={handlerSubmitForm} />
       <h2>Contacts</h2>
       <Filter value={filteredValue} filterChange={handlerFilter} />
       <ContactList users={visibleContacts} onClick={handleDeleteUser} />
-
     </div>
   ); 
 };
