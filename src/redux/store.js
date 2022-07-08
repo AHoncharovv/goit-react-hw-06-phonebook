@@ -22,7 +22,7 @@ const persistConfig = {
   key: 'contacts',
   version: 1,
   storage,
-  blacklist: ['filter'],
+//   blacklist: ['filter'],
 }
 
 const persistedReducer = persistReducer(persistConfig, contactsReducer)

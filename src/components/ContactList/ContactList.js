@@ -1,13 +1,27 @@
 import s from './ContactList.module.css';
-import PropTypes from 'prop-types';
+import { useSelector, useDispatch } from "react-redux/es/exports";
+import { remove } from '../../redux/actions';
 
-function ContactList({ users, onClick }) {
+function ContactList() {
+    
+    const users = useSelector(state => state.items);
+    const filteredValue = useSelector(state => state.filter);
+    const dispatch = useDispatch();
+
+    const handleDeleteUser = event => {
+        const deleteUserId = event.currentTarget.value;
+        dispatch(remove(deleteUserId));
+    }
+
+    const normalizedFilter = filteredValue.toLowerCase();
+    const visibleContacts = users.filter(user => user.name.toLowerCase().includes(normalizedFilter));
+    
     return (
         <ul className={s.list}>
-            {users.map((user) => (
+            {visibleContacts.map((user) => (
                 <li key={user.id} className={s.item}>
                     <span className={s.text}>{user.name} : {user.number}</span>
-                    <button type="button" value={user.id} onClick={onClick} className={s.btn}>Delete</button>
+                    <button type="button" value={user.id} onClick={handleDeleteUser} className={s.btn}>Delete</button>
                 </li>
             ))}
         </ul>
@@ -15,12 +29,3 @@ function ContactList({ users, onClick }) {
 }
 
 export default ContactList;
-
-ContactList.propTypes = {
-    users: PropTypes.arrayOf(PropTypes.shape({
-        id: PropTypes.string.isRequired,
-        name: PropTypes.string.isRequired,
-        number: PropTypes.string.isRequired
-    })),
-    onClick: PropTypes.func.isRequired
-}

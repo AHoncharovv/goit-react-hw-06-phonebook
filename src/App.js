@@ -1,6 +1,6 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { lazy, Suspense } from "react";
-const Phonebook = lazy(() => import('../Pages/Phonebook.js'));
+const Phonebook = lazy(() => import('./Pages/Phonebook.js'));
 
 
 function App() {
